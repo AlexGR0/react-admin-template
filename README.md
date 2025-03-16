@@ -4,19 +4,18 @@
 
 ### 前言
 
-> 笔者利用空余时间集成了一个 react 后台管理项目，已放至 GitHub
-> 启动和打包的时间都稍长，请耐心等待
+> 笔者利用空余时间集成了一个 react 后台管理项目，已放至 GitHub；启动和打包的时间都稍长，请耐心等待
 
 - [GitHub 地址](https://github.com/AlexGR0/react-admin-template)
 
 ### 技术栈
 
 - 开发工具：VScode
-- 技术框架：react^18.3.1+react-route-domr^6.27.0+yypeScript^5.0.4
-- 组件库：antd^5.22.2
+- 技术框架：react^18.3.1+react-route-dom^6.27.0+typeScript^5.0.4
+- 组件库：antd@5
 - 状态管理：dva^2.4.1+react-redux^9.1.2
 - 国际化方案：react-intl@7
-- 打包工具：webpack^5.83.1
+- 打包工具：webpack@5
 - 项目规范：Prettier+husky
 
 ### 代码目录
@@ -83,7 +82,6 @@ npm run start（打包后静态文件启动）
 - **Build：**
 
 ```text
-
 # 测试环境
 npm run build:test
 
