@@ -6,6 +6,41 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "1301387",
+      "name": "向上",
+      "font_class": "xiangshang",
+      "unicode": "e665",
+      "unicode_decimal": 58981
+    },
+    {
+      "icon_id": "17816845",
+      "name": "更多",
+      "font_class": "gengduo",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "25572360",
+      "name": "箭头（左）",
+      "font_class": "jiantouzuo",
+      "unicode": "e929",
+      "unicode_decimal": 59689
+    },
+    {
+      "icon_id": "25572362",
+      "name": "箭头（右）",
+      "font_class": "jiantouyou",
+      "unicode": "e92b",
+      "unicode_decimal": 59691
+    },
+    {
+      "icon_id": "27876623",
+      "name": "语言",
+      "font_class": "yuyan",
+      "unicode": "e640",
+      "unicode_decimal": 58944
+    },
+    {
       "icon_id": "1346236",
       "name": "主题",
       "font_class": "zhuti",
