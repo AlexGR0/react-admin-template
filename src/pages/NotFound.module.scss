@@ -1,0 +1,29 @@
+@import '@/styles/global.scss';
+
+.contain {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  flex-direction: column;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .num {
+    font-size: 100px;
+    font-weight: bold;
+  }
+  .text {
+    font-size: 22px;
+  }
+  .btn {
+    font-size: 16px;
+    margin-top: 20px;
+    padding: 10px 30px;
+    background: #1890ff;
+    border-radius: 30px;
+    color: #fff;
+    cursor: pointer;
+  }
+}
