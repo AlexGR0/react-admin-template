@@ -1,12 +1,11 @@
 const { resolve } = require('path');
-const { PROJECT_PATH, IS_DEV, IS_DEVSERVER } = require('./config');
+const { PROJECT_PATH, IS_DEV } = require('./config');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const webpack = require('webpack');
 const WebpackBar = require('webpackbar');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
-const nodeExternals = require('webpack-node-externals');
 
 const commonCssLoader = [
   MiniCssExtractPlugin.loader,
@@ -36,8 +35,6 @@ module.exports = {
     path: resolve(PROJECT_PATH, './dist'),
   },
   cache: { type: 'filesystem' },
-  externalsPresets: IS_DEVSERVER ? {} : { node: true },
-  externals: IS_DEVSERVER ? [] : [nodeExternals()],
   module: {
     rules: [
       {
@@ -67,18 +64,29 @@ module.exports = {
         },
       },
       {
-        test: /\.(jpg|png|jpeg|gif)$/,
+        test: /\.(png|jpe?g|gif)$/i,
         use: [
+          'file-loader',
           {
-            loader: 'url-loader',
+            loader: 'image-webpack-loader',
             options: {
-              limit: 1024 * 10,
-              fallback: {
-                loader: 'file-loader',
-                options: {
-                  name: 'assets/images/[name]-[contenthash:8].[ext]',
-                },
+              mozjpeg: {
+                progressive: true,
               },
+              optipng: {
+                enabled: false,
+              },
+              pngquant: {
+                quality: [0.65, 0.9],
+                speed: 4,
+              },
+              gifsicle: {
+                interlaced: false,
+              },
+              webp: {
+                quality: 75,
+              },
+              disable: true,
             },
           },
         ],
