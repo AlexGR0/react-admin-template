@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.tsx",
   "scripts": {
+    "start": "node ./server/app.tsp",
     "dev": "cross-env NODE_ENV=development WEBPACK_DEV_SERVER=true webpack-dev-server --config ./webpack-config/webpack.dev.js",
     "build:dev": "cross-env NODE_ENV=development webpack --config ./webpack-config/webpack.dev.js",
     "build:prod": "cross-env NODE_ENV=production node ./webpack-config/build.js",
@@ -21,6 +22,7 @@
     "dva": "^2.4.1",
     "dva-core": "^2.0.4",
     "dva-loading": "^3.0.25",
+    "glob": "^11.0.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-intl": "^7.0.1",
@@ -57,9 +59,11 @@
     "eslint-webpack-plugin": "^4.0.1",
     "file-loader": "^6.2.0",
     "fork-ts-checker-webpack-plugin": "^8.0.0",
+    "glob": "^11.0.1",
     "html-loader": "^5.1.0",
     "html-webpack-plugin": "^5.5.1",
     "husky": "^8.0.0",
+    "image-webpack-loader": "^8.1.0",
     "less-loader": "^11.1.0",
     "lint-staged": "^13.2.2",
     "mini-css-extract-plugin": "^2.7.6",
@@ -79,7 +83,6 @@
     "webpack-cli": "^5.1.1",
     "webpack-dev-server": "^4.15.0",
     "webpack-merge": "^5.9.0",
-    "webpack-node-externals": "^3.0.0",
     "webpackbar": "^5.0.2"
   },
   "browserslist": {
