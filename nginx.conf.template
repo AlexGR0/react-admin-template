@@ -1,100 +1,100 @@
-user nginx;
 worker_processes auto;
-error_log /var/log/nginx/error.log;
-pid /run/nginx.pid;
-
-include /usr/share/nginx/modules/*.conf;
-
 events {
-    worker_connections 1024;
+    worker_connections 4096;
 }
-
 http {
-    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
-                      '$status $body_bytes_sent "$http_referer" '
-                      '"$http_user_agent" "$http_x_forwarded_for"';
-
-    access_log  /var/log/nginx/access.log  main;
-
-    sendfile            on;
-    tcp_nopush          on;
-    tcp_nodelay         on;
-    keepalive_timeout   65;
-    types_hash_max_size 4096;
-         
-    include             /etc/nginx/mime.types;
-    default_type        application/octet-stream;
-        
-    include /etc/nginx/conf.d/*.conf;
+    include       mime.types;
+    default_type  application/octet-stream;
+    sendfile        on;
+    keepalive_timeout  65;
     
+    # 文件访问缓存
+    open_file_cache max=1000 inactive=20s;
+    open_file_cache_valid 30s;
+    open_file_cache_min_uses 2;
+
+    # SSL 优化设置
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 10m;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers on;
+    ssl_ciphers 'ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384';
+
+    # HTTPS 主配置
     server {
-      listen            80;
-      server_name       zpq.mobi www.zpq.mobi; 
-      root              /usr/share/nginx/html/public;
-    
-      # compression 
-      gzip on; 
-      gzip_min_length   2k;
-      gzip_buffers      4 16k;
-      gzip_http_version 1.0;
-      gzip_comp_level   3;
-      gzip_types        text/plain application/javascript application/x-javascript text/css application/xml text/javascript application/x-httpd-php image/jpeg image/gif image/png application/json;
-      gzip_vary on;
+        listen 443 ssl http2;
+        server_name XXX.com;
 
-      # 配置 Header
-      add_header X-Frame-Options "SAMEORIGIN" always;
-      add_header X-XSS-Protection "1; mode=block" always;
-      add_header X-Content-Type-Options "nosniff" always;
-      add_header Cache-Control no-cache;
+        # SSL 证书配置（替换为你的证书路径）
+        ssl_certificate /etc/nginx/keys/XXX.pem;
+        ssl_certificate_key /etc/nginx/keys/XXX.key;
+        
+        # 启用 OCSP Stapling
+        ssl_stapling on;
+        ssl_stapling_verify on;
+        resolver 8.8.8.8 8.8.4.4 valid=300s;
+        resolver_timeout 5s;
 
-      # 配置路由规则
-      location = /health/check {
-        default_type    application/json;
-        return          200 '{"success":"OK"}';
-      }
+        # 根目录设置
+        root /home/XXX/dist;
+        index index.html;
 
-      location ^~ /api {
-        proxy_pass              http://localhost:3000;
-        proxy_set_header        X-Real-IP $remote_addr;
-        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header        Host $host:$server_port;
-      }
+        # 上传文件目录
+        location /uploads/ {
+            alias /home/XXX/uploads/;
+            expires 365d;
+            access_log off;
+            add_header Cache-Control "public";
+        }
 
-      location / {
-        try_files $uri /index.html;
-      }
+        # API 代理
+        location /api/ {
+            proxy_pass http://127.0.0.1:7777/api/;
+            proxy_http_version 1.1;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+
+            # 超时设置
+            proxy_connect_timeout 60s;
+            proxy_send_timeout 60s;
+            proxy_read_timeout 120s;
+        }
+
+        # 静态文件配置
+        location / {
+            try_files $uri $uri/ /index.html;
+        }
+
+        # 安全防护
+        location ~ /\.(?!well-known).* {
+            deny all;
+            access_log off;
+        }
+        location ~* (\.env|\.git) {
+            deny all;
+        }
+
+        # 安全头
+        add_header X-Frame-Options "SAMEORIGIN";
+        add_header X-Content-Type-Options "nosniff";
+        add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload";
+        add_header Content-Security-Policy "default-src 'self' https: data: 'unsafe-inline' 'unsafe-eval'";
+
+        # 上传限制与压缩
+        client_max_body_size 10M;
+        gzip on;
+        gzip_types text/plain text/css application/json application/javascript;
     }
 
+    # HTTP 重定向到 HTTPS
     server {
-      listen       443 ssl;
-      server_name  zpq.mobi www.zpq.mobi;
-      root         /usr/share/nginx/html/public;
-
-      ssl_certificate      /etc/nginx/ssl/www.zpq.mobi.pem;
-      ssl_certificate_key  /etc/nginx/ssl/www.zpq.mobi.key;
-
-      ssl_session_cache    shared:SSL:1m;
-      ssl_session_timeout  5m;
-
-      # 配置加密套件
-      ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:HIGH:!aNULL:!MD5:!RC4:!DHE;
-      ssl_prefer_server_ciphers on;
-
-      # 配置路由规则
-      location = /health/check {
-        default_type    application/json;
-        return          200 '{"success":"OK"}';
-      }
-
-      location ^~ /api {
-        proxy_pass              http://localhost:3000;
-        proxy_set_header        X-Real-IP $remote_addr;
-        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header        Host $host:$server_port;
-      }
-
-      location / {
-        try_files $uri /index.html;
-      }
+        listen 80;
+        server_name XXX.com;
+        rewrite ^(.*)$ https://$host$1;
+        location / {
+            try_files $uri $uri/ /index.html;
+        }
     }
 }

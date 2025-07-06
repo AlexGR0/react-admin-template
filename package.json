@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.tsx",
   "scripts": {
-    "start": "node ./server/app.tsp",
+    "start": "node ./server/app.ts",
     "dev": "cross-env NODE_ENV=development WEBPACK_DEV_SERVER=true webpack-dev-server --config ./webpack-config/webpack.dev.js",
     "build:dev": "cross-env NODE_ENV=development webpack --config ./webpack-config/webpack.dev.js",
     "build:prod": "cross-env NODE_ENV=production node ./webpack-config/build.js",
