@@ -62,6 +62,11 @@ export const routes: RouteConfig[] = [
         name: '仪表盘Settings',
         componentPath: 'pages/Settings',
       },
+      {
+        path: '/dashboard/topology',
+        name: '拓扑图',
+        componentPath: 'pages/Topology',
+      },
     ],
   },
   {
